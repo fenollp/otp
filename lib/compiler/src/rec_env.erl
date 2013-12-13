@@ -49,7 +49,6 @@ test_custom(N) ->
     F = fun (X) -> list_to_atom("X"++integer_to_list(X)) end,
     test_custom(F, N).
 
-%%@hidden
 test_custom(F, N) ->
     test_0({custom, F}, N).
 
