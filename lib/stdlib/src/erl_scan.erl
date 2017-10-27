@@ -374,9 +374,9 @@ scan1([$;|Cs], St, Line, Col, Toks) ->
 scan1([$_=C|Cs], St, Line, Col, Toks) ->
     scan_variable(Cs, St, Line, Col, Toks, [C]);
 %% More punctuation characters below.
-scan1([$\%|Cs], St, Line, Col, Toks) when not St#erl_scan.comment ->
+scan1([$%|Cs], St, Line, Col, Toks) when not St#erl_scan.comment ->
     skip_comment(Cs, St, Line, Col, Toks, 1);
-scan1([$\%=C|Cs], St, Line, Col, Toks) ->
+scan1([$%=C|Cs], St, Line, Col, Toks) ->
     scan_comment(Cs, St, Line, Col, Toks, [C]);
 scan1([C|Cs], St, Line, Col, Toks) when ?DIGIT(C) ->
     scan_number(Cs, St, Line, Col, Toks, [C]);

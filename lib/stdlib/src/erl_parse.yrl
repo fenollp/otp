@@ -219,7 +219,7 @@ clause_args -> argument_list : element(1, '$1').
 clause_guard -> 'when' guard : '$2'.
 clause_guard -> '$empty' : [].
 
-clause_body -> '->' exprs: '$2'.
+clause_body -> '->' exprs : '$2'.
 
 
 expr -> 'catch' expr : {'catch',?anno('$1'),'$2'}.
