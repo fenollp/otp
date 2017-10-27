@@ -71,7 +71,9 @@ Expect 2.
 Rootsymbol form.
 
 form -> attribute dot : '$1'.
+form -> attribute     : '$1'.
 form -> function dot : '$1'.
+form -> function     : '$1'.
 
 attribute -> '-' atom attr_val               : build_attribute('$2', '$3').
 attribute -> '-' atom typed_attr_val         : build_typed_attribute('$2','$3').
@@ -99,6 +101,7 @@ typed_expr -> expr '::' top_type          : {typed,'$1','$3'}.
 
 type_sigs -> type_sig                     : ['$1'].
 type_sigs -> type_sig ';' type_sigs       : ['$1'|'$3'].
+type_sigs -> type_sig     type_sigs       : ['$1'|'$2'].
 
 type_sig -> fun_type                      : '$1'.
 type_sig -> fun_type 'when' type_guards   : {type, ?anno('$1'), bounded_fun,
@@ -205,6 +208,7 @@ function -> function_clauses : build_function('$1').
 
 function_clauses -> function_clause : ['$1'].
 function_clauses -> function_clause ';' function_clauses : ['$1'|'$3'].
+function_clauses -> function_clause     function_clauses : ['$1'|'$2'].
 
 function_clause -> atom clause_args clause_guard clause_body :
 	{clause,?anno('$1'),element(3, '$1'),'$2','$3','$4'}.
@@ -386,6 +390,7 @@ if_expr -> 'if' if_clauses 'end' : {'if',?anno('$1'),'$2'}.
 
 if_clauses -> if_clause : ['$1'].
 if_clauses -> if_clause ';' if_clauses : ['$1' | '$3'].
+if_clauses -> if_clause     if_clauses : ['$1' | '$2'].
 
 if_clause -> guard clause_body :
 	{clause,?anno(hd(hd('$1'))),[],'$1','$2'}.
@@ -396,6 +401,7 @@ case_expr -> 'case' expr 'of' cr_clauses 'end' :
 
 cr_clauses -> cr_clause : ['$1'].
 cr_clauses -> cr_clause ';' cr_clauses : ['$1' | '$3'].
+cr_clauses -> cr_clause     cr_clauses : ['$1' | '$2'].
 
 cr_clause -> expr clause_guard clause_body :
 	{clause,?anno('$1'),['$1'],'$2','$3'}.
@@ -423,6 +429,7 @@ integer_or_var -> var : '$1'.
 
 fun_clauses -> fun_clause : ['$1'].
 fun_clauses -> fun_clause ';' fun_clauses : ['$1' | '$3'].
+fun_clauses -> fun_clause     fun_clauses : ['$1' | '$2'].
 
 fun_clause -> argument_list clause_guard clause_body :
 	{Args,Anno} = '$1',
@@ -445,6 +452,7 @@ try_catch -> 'after' exprs 'end' :
 
 try_clauses -> try_clause : ['$1'].
 try_clauses -> try_clause ';' try_clauses : ['$1' | '$3'].
+try_clauses -> try_clause     try_clauses : ['$1' | '$2'].
 
 try_clause -> expr clause_guard clause_body :
 	A = ?anno('$1'),
