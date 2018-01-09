@@ -493,6 +493,23 @@ handle_call(which_children, _From, State) ->
           State#state.children),
     {reply, Resp, State};
 
+handle_call({which_child, _Id}, _From, State) when ?is_simple(State) ->
+    Reply = {error, simple_one_for_one},
+    {reply, Reply, State};
+
+handle_call({which_child, Id}, _From, State) ->
+    Resp =
+	children_to_list(
+          fun(Id,#child{pid = ?restarting(_),
+                        child_type = ChildType, modules = Mods}) ->
+                  {Id, restarting, ChildType, Mods};
+             (Id,#child{pid = Pid,
+                        child_type = ChildType, modules = Mods}) ->
+                  {Id, Pid, ChildType, Mods}
+          end,
+          State#state.children),
+    {reply, Resp, State};
+
 handle_call(count_children, _From,  #state{dynamic_restarts = Restarts} = State)
   when ?is_simple(State) ->
     #child{child_type = CT} = get_dynamic_child(State),
@@ -1461,3 +1478,8 @@ dyn_init(Child,State) when ?is_temporary(Child) ->
     State#state{dynamics={sets,sets:new()}};
 dyn_init(_Child,State) ->
     State#state{dynamics={maps,maps:new()}}.
+
+dyn_get(_ChildId, #state{dynamics = {sets,_Db}}) ->
+    {ok, undefined};
+dyn_get(ChildId) ->
+
